@@ -1,0 +1,46 @@
+/* Variables del Design System de Figma ("2 · Design System"). */
+:root {
+  --color-primary-gold: #b67800;
+  --color-primary-gold-light: #fbefd2;
+  --color-primary-gold-dark: #8a5b00;
+  --color-action-navy: #00528c;
+  --color-action-navy-dark: #003b66;
+  --color-action-navy-light: #e6f0f7;
+  --color-accent-amber: #f1b53e;
+  --color-accent-amber-text: #6b4700;
+
+  --color-surface-page: #f9fafc;
+  --color-surface-card: #ffffff;
+  --color-surface-input: #f3f5f9;
+  --color-border-default: #dadfe8;
+
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #5f5f5f;
+  --color-text-on-dark: #ffffff;
+
+  --color-status-success: #2e7d32;
+  --color-status-success-bg: #e3f3e4;
+  --color-status-danger: #c62828;
+  --color-status-danger-bg: #fce8e8;
+  --color-status-warning: #9a5b00;
+  --color-status-warning-bg: #fff1d6;
+  --color-status-neutral: #5f5f5f;
+  --color-status-neutral-bg: #ededed;
+
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-button: 0 3px 8px rgba(0, 51, 102, 0.25);
+
+  --font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
