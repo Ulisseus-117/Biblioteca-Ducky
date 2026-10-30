@@ -1,0 +1,7 @@
+{
+  "name": "biblioteca-ducky-movil",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}

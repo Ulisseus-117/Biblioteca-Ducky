@@ -11,6 +11,9 @@
 --    * Contraseñas SIEMPRE como hash bcrypt, nunca en texto plano.
 -- =====================================================================
 
+-- Los acentos (ej. el estado 'Dañado') se leen como UTF-8 aunque la terminal use otra codificación
+SET NAMES utf8mb4;
+
 DROP DATABASE IF EXISTS biblioteca_ducky;
 CREATE DATABASE biblioteca_ducky
   CHARACTER SET utf8mb4

@@ -2,7 +2,7 @@
 
 Equipo **Duck Tech** · SC2234 Ingeniería de Software · Sprint 1 (gestión de usuarios y gestión de libros)
 
-Aplicación web basada en el prototipo de Figma, con patrón **MVC**, código modular y estándar de codificación,
+Aplicación web y app móvil basadas en el prototipo de Figma, con patrón **MVC**, código modular y estándar de codificación,
 conectada a una base de datos **MySQL local**.
 
 | Capa | Tecnología | Carpeta |
@@ -10,6 +10,7 @@ conectada a una base de datos **MySQL local**.
 | Base de datos | MySQL 8 | `database/` |
 | Servidor / API REST | Node.js 22 + Express 5 + TypeScript | `api/` |
 | Cliente web | React 19 + TypeScript + Vite | `web/` |
+| App móvil | Ionic 9 + React 19 + TypeScript + Capacitor 8 (Android) | `movil/` |
 
 ---
 
@@ -28,6 +29,18 @@ conectada a una base de datos **MySQL local**.
 - Consulta de libros (todos los roles): búsqueda combinada por título, autor, tema, ISBN, editorial, año y existencias.
 - Menú lateral según el rol: el administrador ve todo; el bibliotecario, libros, ejemplares y consulta;
   alumno y profesor, solo consulta. El permiso se valida en la API, no solo en la pantalla.
+
+**App móvil (`movil/`)** — solo consulta de libros, igual a la sección "Móvil" del prototipo (pantallas M01 a M11)
+
+- Login (M01, M02) con los mensajes de credenciales incorrectas; la sesión queda guardada en el teléfono.
+- Menú de 3 líneas (M03) con "Consulta de libros", el usuario, su rol y "Cerrar sesión".
+- Buscar libros por título, autor y tema (M04) y "Más filtros" (M05): ISBN, editorial, año, ejemplares mínimo/máximo,
+  orden y dirección.
+- Resultados (M06, M07, M06b): criterios de búsqueda, orden por título, autor o ejemplares, paginación,
+  "Generar PDF" e "Imprimir".
+- Ficha del libro (M08, M08b) y sus ejemplares (M09, M09b) con estado, modalidad, ubicación y devolución esperada,
+  más filtros de ejemplares (M10).
+- Vista previa del listado en PDF (M11): descargar, imprimir y enviar por WhatsApp (hoja para compartir).
 
 **Base de datos (`database/`)**
 
@@ -131,7 +144,7 @@ DB_PASSWORD=DuckyApp2026!
 DB_NAME=biblioteca_ducky
 JWT_SECRET=cambia-esta-clave-por-una-larga-y-secreta
 JWT_EXPIRES_IN=8h
-CORS_ORIGIN=http://localhost:5173
+CORS_ORIGIN=http://localhost:5173,http://localhost:8100,http://localhost
 ```
 
 Arranca la API en modo desarrollo:
@@ -161,7 +174,7 @@ npm run dev
 
 Abre <http://localhost:5173>. Vite reenvía las llamadas `/api` al servidor del paso 4.
 
-### Paso 6. Inicia sesión
+### Paso 6. Inicia sesión (web y móvil)
 
 Todas las cuentas demo usan la contraseña **`1234`** (igual que en el prototipo de Figma):
 
@@ -176,6 +189,54 @@ Datos útiles para probar los rechazos: `A01235011` tiene una multa sin pagar, `
 y "To Kill a Mockingbird" tiene ejemplares prestados y reservados.
 
 ---
+
+### Paso 7. App móvil en el navegador
+
+Con la API corriendo (paso 4), en **otra** terminal:
+
+```bash
+cd movil
+npm install
+npm run dev
+```
+
+Abre <http://localhost:8100>. Para verla como teléfono: en Chrome presiona **F12** y luego **Ctrl+Shift+M** (vista de dispositivo).
+Igual que la web, Vite reenvía `/api` al puerto 3000.
+
+> Si ya tenías `api/.env` de antes, cambia la línea `CORS_ORIGIN` por la del paso 4
+> (`http://localhost:5173,http://localhost:8100,http://localhost`) y reinicia la API. Sin eso el teléfono no puede llamar a la API.
+
+### Paso 8. App móvil en Android (Capacitor)
+
+**Requisitos (una sola vez):** instala [Android Studio](https://developer.android.com/studio). Al abrirlo por primera vez
+deja que descargue el SDK. Para usar emulador: *More Actions → Virtual Device Manager → Create device* (por ejemplo Pixel 7).
+
+**Compilar y abrir en Android Studio:**
+
+```bash
+cd movil
+npm run android     # = npm run build + npx cap sync android + npx cap open android
+```
+
+En Android Studio espera a que termine *Gradle sync* y presiona **Run ▶** con el emulador o tu teléfono seleccionado.
+
+**¿A qué servidor se conecta el teléfono?** `localhost` dentro del teléfono es el propio teléfono, no tu PC:
+
+| Dónde corre la app | URL de la API |
+|---|---|
+| Emulador de Android | `http://10.0.2.2:3000/api` (ya viene por defecto, no hay que configurar nada) |
+| Teléfono físico (misma red Wi-Fi que la PC) | `http://IP-DE-TU-PC:3000/api` |
+
+Para el teléfono físico:
+
+1. Busca la IP de tu PC: en PowerShell `ipconfig` → "Dirección IPv4" del adaptador Wi-Fi (por ejemplo `192.168.1.50`).
+2. Activa en el teléfono *Opciones de desarrollador → Depuración USB*, conéctalo por USB y acepta el aviso.
+3. Antes de compilar, copia `movil/.env.example` a `movil/.env` y pon `VITE_API_URL=http://192.168.1.50:3000/api`.
+   Si la IP de tu PC cambia (otra red), edita `.env` y vuelve a ejecutar `npm run android`.
+4. La primera vez que corre la API, Windows pregunta si Node.js puede usar la red: permite **Redes privadas**.
+
+Cada vez que cambies código de `movil/src`, vuelve a ejecutar `npm run android` (o `npm run build && npx cap sync android`
+y Run en Android Studio).
 
 ## 3. Arquitectura (MVC)
 
@@ -215,7 +276,24 @@ biblioteca-ducky/
     ├── context/         AuthContext (sesión y permisos)
     ├── config/          menú por permiso y colores de insignias
     └── styles/          tokens.css (variables del Design System) · global.css
+
+movil/                   (misma estructura que web/, con componentes de Ionic)
+├── capacitor.config.ts  id de la app, carpeta web (dist) y esquema http para hablar con la API local
+├── android/             proyecto nativo de Android Studio (lo genera Capacitor)
+└── src/
+    ├── pages/           auth (login) · consulta (búsqueda, filtros, resultados, ficha, ejemplares, vista previa PDF)
+    ├── components/      layout (AppBar, MenuLateral, Pantalla) · ui (Boton, Campo, TarjetaLibro, TarjetaEjemplar…)
+    ├── services/        cliente HTTP, un servicio por recurso de la API, listado y generación del PDF
+    ├── context/         AuthContext (sesión)
+    ├── hooks/           useConsulta, useTemas
+    ├── utils/           criterios de búsqueda en la URL y formatos (folio EJ-000001, fechas, ubicación)
+    ├── config/          colores de insignias, URL de la API y ajustes de Android
+    └── styles/          tokens.css (los mismos de la web) · tema.css (colores de Ionic) · global.css
 ```
+
+En la app móvil la **Vista** son `pages/` y `components/`; consume la misma API, así que el modelo y el controlador
+son los del servidor. La app no decide reglas de negocio ni permisos: solo oculta lo que el rol no puede ver
+y la API vuelve a validar cada petición.
 
 ### Endpoints principales
 
@@ -244,6 +322,7 @@ Ver [`docs/CONVENCIONES.md`](docs/CONVENCIONES.md). Comandos:
 ```bash
 cd api && npm run lint && npm run format     # ESLint + Prettier
 cd web && npm run lint && npm run format     # oxlint + Prettier
+cd movil && npm run lint && npm run format   # oxlint + Prettier
 ```
 
 ---
@@ -258,6 +337,9 @@ cd web && npm run lint && npm run format     # oxlint + Prettier
 | `Falta la variable de entorno ...` | No copiaste `.env.example` a `.env` dentro de `api/`. |
 | La página carga pero dice "No se pudo conectar con el servidor" | La API no está corriendo: abre otra terminal y ejecuta `cd api && npm run dev`. |
 | El puerto 3000 o 5173 está ocupado | Cambia `PORT` en `api/.env` (y el proxy en `web/vite.config.ts`), o cierra el programa que lo usa. |
+| La app móvil dice "No se pudo conectar con el servidor (…)" | Revisa que la API esté corriendo, que `VITE_API_URL` en `movil/.env` tenga la IP correcta de tu PC (en el emulador no hace falta) y que el firewall de Windows permita Node.js en redes privadas. |
+| En el navegador la app móvil marca error de CORS | Falta `http://localhost:8100` en `CORS_ORIGIN` de `api/.env`. Reinicia la API después de cambiarlo. |
+| Acentos raros en los datos (ej. `FicciÃ³n`) | Vuelve a ejecutar `schema.sql`, `seed.sql` y `create-user.sql`; ahora fijan `SET NAMES utf8mb4`. |
 | Quiero reiniciar los datos demo | Ejecuta de nuevo `schema.sql`, `seed.sql` y `create-user.sql`. |
 | Quiero crear un usuario a mano en SQL | Genera el hash con `cd api && npm run hash -- MiContrasena` y úsalo en el `INSERT`. |
 
@@ -267,7 +349,9 @@ cd web && npm run lint && npm run format     # oxlint + Prettier
 
 - `REGLA_PRESTAMO.max_libros` del profesor queda en `NULL` hasta que el Product Owner lo defina.
 - El modelo no guarda nombre de la persona; la barra superior muestra matrícula y rol.
-- "Perfiles y permisos" (pantallas 29.x del Figma) y la app móvil no están en este entregable;
+- "Perfiles y permisos" (pantallas 29.x del Figma) no está en este entregable;
   los permisos se administran por ahora desde `seed.sql` (tablas `permiso` y `rol_permiso`).
 - Préstamos, devoluciones, renovaciones, multas y reportes corresponden al Sprint 3; la BD ya tiene las tablas,
   la función de días hábiles y la vista de adeudos.
+- App móvil: el ícono es el de Capacitor por defecto. En Android, "Descargar PDF" lo guarda en Documentos e
+  "Imprimir" abre la hoja para compartir (Android no tiene diálogo de impresión web).

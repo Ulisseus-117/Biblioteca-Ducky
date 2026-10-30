@@ -22,5 +22,9 @@ export const env = {
     secret: requerida('JWT_SECRET'),
     expiresIn: process.env.JWT_EXPIRES_IN ?? '8h',
   },
-  corsOrigin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
+  // Lista separada por comas: web (Vite), app móvil en el navegador (8100) y app Android (http://localhost)
+  corsOrigin: (process.env.CORS_ORIGIN ?? 'http://localhost:5173,http://localhost:8100,http://localhost')
+    .split(',')
+    .map((origen) => origen.trim())
+    .filter(Boolean),
 };

@@ -25,6 +25,8 @@ export interface Ejemplar {
   seccion: number;
   modalidad: Modalidad;
   estado: EstadoEjemplar;
+  /** Fecha de devolución del préstamo activo ('AAAA-MM-DD') o null si no está prestado. */
+  fechaDevolucionEsperada: string | null;
 }
 
 export interface FiltrosEjemplar {
@@ -52,7 +54,10 @@ const COLUMNAS_ORDEN = {
 
 const SELECT_EJEMPLAR = `
   SELECT e.id_ejemplar AS idEjemplar, e.isbn, l.titulo, e.id_ubicacion AS idUbicacion,
-         u.estante, u.seccion, e.modalidad, e.estado
+         u.estante, u.seccion, e.modalidad, e.estado,
+         DATE_FORMAT((SELECT p.fecha_devolucion_esperada FROM prestamo p
+                       WHERE p.id_ejemplar = e.id_ejemplar AND p.fecha_devolucion_real IS NULL
+                       ORDER BY p.fecha_inicio DESC LIMIT 1), '%Y-%m-%d') AS fechaDevolucionEsperada
     FROM ejemplar e
     JOIN libro l ON l.isbn = e.isbn
     JOIN ubicacion u ON u.id_ubicacion = e.id_ubicacion`;

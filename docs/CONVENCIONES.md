@@ -1,7 +1,7 @@
 # Estándar de codificación · Duck Tech
 
-Aplica a `api/` y `web/`. Las herramientas lo revisan de forma automática:
-**Prettier** (formato), **ESLint** en la API y **oxlint** en el cliente web, y **TypeScript estricto** (`strict: true`).
+Aplica a `api/`, `web/` y `movil/`. Las herramientas lo revisan de forma automática:
+**Prettier** (formato), **ESLint** en la API y **oxlint** en la web y la app móvil, y **TypeScript estricto** (`strict: true`).
 
 ## Idioma y nombres
 
@@ -22,7 +22,7 @@ Los términos técnicos de las librerías se dejan en inglés (`req`, `res`, `ro
 ## Formato (Prettier)
 
 - 2 espacios, comillas simples, punto y coma, coma final, líneas de máximo 110 caracteres.
-- `npm run format` en `api/` y en `web/`.
+- `npm run format` en `api/`, `web/` y `movil/`.
 
 ## Reglas de diseño
 
@@ -38,8 +38,8 @@ Los términos técnicos de las librerías se dejan en inglés (`req`, `res`, `ro
 4. **Validación** de toda entrada con zod en `validators/` antes de llegar al controlador.
 5. **Errores**: lanzar `HttpError` con mensaje en español para el usuario y un `codigo` estable para el cliente.
 6. **Sin borrado físico** de usuarios ni de ejemplares con historial: se usa `activo` o el estado.
-7. **Componentes reutilizables** en `web/src/components/ui/`; colores y medidas solo desde `styles/tokens.css`
-   (variables del Design System de Figma), nunca valores sueltos.
+7. **Componentes reutilizables** en `web/src/components/ui/` y `movil/src/components/ui/`; colores y medidas
+   solo desde `styles/tokens.css` (variables del Design System de Figma), nunca valores sueltos.
 8. **Comentarios** solo para explicar el *porqué* (una regla de negocio, una decisión). JSDoc corto en funciones públicas.
 
 ## Git

@@ -4,6 +4,8 @@
 --  Todas las cuentas demo usan la contraseña 1234 (guardada como hash bcrypt).
 -- =====================================================================
 USE biblioteca_ducky;
+-- Evita acentos rotos (ej. "FicciÃ³n") si la terminal no usa UTF-8
+SET NAMES utf8mb4;
 
 -- ---------- Roles ----------
 INSERT INTO rol (id_rol, nombre, descripcion) VALUES
