@@ -9,10 +9,10 @@ SET NAMES utf8mb4;
 
 -- ---------- Roles ----------
 INSERT INTO rol (id_rol, nombre, descripcion) VALUES
-  (1, 'Administrador', 'Acceso total: usuarios, perfiles, libros, ejemplares, solicitudes de compra y consulta.'),
-  (2, 'Bibliotecario', 'Gestión de libros, ejemplares, préstamos, devoluciones, multas y consulta.'),
-  (3, 'Alumno',        'Solo consulta: catálogo, sus préstamos y sus multas.'),
-  (4, 'Profesor',      'Solo consulta, con reglas de préstamo propias.');
+  (1, 'Administrador', 'Acceso total al sistema.'),
+  (2, 'Bibliotecario', 'Gestiona libros, ejemplares y consulta.'),
+  (3, 'Alumno',        'Consulta el catálogo de libros.'),
+  (4, 'Profesor',      'Consulta el catálogo y propone compras de libros.');
 
 -- ---------- Permisos ----------
 INSERT INTO permiso (id_permiso, nombre_permiso, descripcion_permiso) VALUES
@@ -33,9 +33,10 @@ INSERT INTO rol_permiso (id_rol, id_permiso) VALUES
   (1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),(1,11),
   -- Bibliotecario
   (2,3),(2,4),(2,6),(2,7),(2,9),(2,10),(2,11),
-  -- Alumno y Profesor: solo consulta
+  -- Alumno: consulta
   (3,6),(3,11),
-  (4,6),(4,11);
+  -- Profesor: consulta y solicitud de compra
+  (4,5),(4,6),(4,11);
 
 -- ---------- Reglas de préstamo por rol ----------
 -- Profesor.max_libros queda NULL: PENDIENTE de confirmar con el Product Owner.

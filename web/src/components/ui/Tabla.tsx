@@ -19,6 +19,8 @@ interface Props<T> {
   alOrdenar?: (columna: string) => void;
   cargando?: boolean;
   mensajeVacio?: string;
+  /** Encabezado gris claro en lugar de azul (ej. Perfiles y permisos). */
+  clara?: boolean;
 }
 
 export function Tabla<T>({
@@ -30,6 +32,7 @@ export function Tabla<T>({
   alOrdenar,
   cargando,
   mensajeVacio,
+  clara = false,
 }: Props<T>) {
   const iconoOrden = (columna: string) => {
     if (orden !== columna) return 'ordenar';
@@ -37,7 +40,7 @@ export function Tabla<T>({
   };
 
   return (
-    <div className="tabla-contenedor">
+    <div className={`tabla-contenedor ${clara ? 'tabla-contenedor--clara' : ''}`}>
       <table className="tabla">
         <thead>
           <tr>

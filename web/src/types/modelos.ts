@@ -138,3 +138,15 @@ export interface LineaSolicitud {
   costoUnitario: number;
   libroNuevo?: { titulo: string; autor: string };
 }
+
+export interface Permiso {
+  idPermiso: number;
+  nombre: string;
+  descripcion: string | null;
+}
+
+/** Perfil (rol) con los ids de sus permisos y cuántos usuarios lo tienen. */
+export interface Perfil extends Rol {
+  permisos: number[];
+  totalUsuarios: number;
+}

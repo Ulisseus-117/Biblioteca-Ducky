@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Pantalla } from '../../components/layout/Pantalla';
 import { Alerta } from '../../components/ui/Alerta';
 import { Boton } from '../../components/ui/Boton';
@@ -28,8 +28,10 @@ const FILTROS_INICIALES: FiltrosLibros = {
 /** Consulta de libros para todos los roles: búsqueda por título, autor, tema, ISBN, editorial o año. */
 export function ConsultaPage() {
   const navegar = useNavigate();
-  const [borrador, setBorrador] = useState(FILTROS_INICIALES);
-  const [filtros, setFiltros] = useState(FILTROS_INICIALES);
+  // Al volver de la vista previa del PDF se conservan los criterios de búsqueda
+  const filtrosPrevios = (useLocation().state as { filtros?: FiltrosLibros } | null)?.filtros;
+  const [borrador, setBorrador] = useState({ ...FILTROS_INICIALES, ...filtrosPrevios });
+  const [filtros, setFiltros] = useState({ ...FILTROS_INICIALES, ...filtrosPrevios });
   const [pagina, setPagina] = useState(1);
   const { orden, dir, alternar } = useOrden('titulo');
   const temas = useConsulta(() => catalogosService.temas(), []);
@@ -149,6 +151,9 @@ export function ConsultaPage() {
         <h2 className="seccion-titulo" style={{ flex: 1 }}>
           Resultados ({datos?.total ?? 0} {datos?.total === 1 ? 'libro' : 'libros'})
         </h2>
+        <Boton onClick={() => navegar('/consulta/pdf', { state: { filtros } })} disabled={!datos?.total}>
+          Generar PDF
+        </Boton>
         <Boton variante="secundario" onClick={() => window.print()}>
           Imprimir
         </Boton>

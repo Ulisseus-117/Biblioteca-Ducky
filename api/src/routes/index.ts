@@ -4,6 +4,7 @@ import { authRouter } from './auth.routes';
 import { catalogoRouter } from './catalogo.routes';
 import { ejemplarRouter } from './ejemplar.routes';
 import { libroRouter } from './libro.routes';
+import { perfilRouter } from './perfil.routes';
 import { solicitudRouter } from './solicitud.routes';
 import { usuarioRouter } from './usuario.routes';
 
@@ -17,6 +18,7 @@ apiRouter.use('/auth', authRouter);
 // A partir de aquí todas las rutas requieren sesión
 apiRouter.use(autenticar);
 apiRouter.use('/usuarios', usuarioRouter);
+apiRouter.use('/perfiles', perfilRouter);
 apiRouter.use('/libros', libroRouter);
 apiRouter.use('/ejemplares', ejemplarRouter);
 apiRouter.use('/solicitudes', solicitudRouter);

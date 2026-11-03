@@ -5,12 +5,16 @@ import { RutaProtegida } from './components/layout/RutaProtegida';
 import { AuthProvider } from './context/AuthContext';
 import { LoginPage } from './pages/auth/LoginPage';
 import { ConsultaPage } from './pages/consulta/ConsultaPage';
+import { ListadoPdfPage } from './pages/consulta/ListadoPdfPage';
 import { EjemplarEditarPage } from './pages/ejemplares/EjemplarEditarPage';
 import { EjemplaresPage } from './pages/ejemplares/EjemplaresPage';
 import { EjemplaresRegistroPage } from './pages/ejemplares/EjemplaresRegistroPage';
 import { LibroDetallePage } from './pages/libros/LibroDetallePage';
 import { LibroFormPage } from './pages/libros/LibroFormPage';
 import { LibrosPage } from './pages/libros/LibrosPage';
+import { NuevoPerfilPage } from './pages/perfiles/NuevoPerfilPage';
+import { PerfilesPage } from './pages/perfiles/PerfilesPage';
+import { PermisosPerfilPage } from './pages/perfiles/PermisosPerfilPage';
 import { InicioRedirect } from './pages/sistema/InicioRedirect';
 import { NoEncontradoPage } from './pages/sistema/NoEncontradoPage';
 import { SolicitudDetallePage } from './pages/solicitudes/SolicitudDetallePage';
@@ -39,6 +43,15 @@ export function App() {
             <Route index element={<InicioRedirect />} />
 
             <Route path="usuarios" element={conPermiso('usuarios.gestionar', <UsuariosPage />)} />
+            <Route path="usuarios/perfiles" element={conPermiso('perfiles.gestionar', <PerfilesPage />)} />
+            <Route
+              path="usuarios/perfiles/nuevo"
+              element={conPermiso('perfiles.gestionar', <NuevoPerfilPage />)}
+            />
+            <Route
+              path="usuarios/perfiles/:idRol"
+              element={conPermiso('perfiles.gestionar', <PermisosPerfilPage />)}
+            />
             <Route path="usuarios/nuevo" element={conPermiso('usuarios.gestionar', <UsuarioFormPage />)} />
             <Route
               path="usuarios/:matricula/editar"
@@ -71,6 +84,7 @@ export function App() {
             />
 
             <Route path="consulta" element={conPermiso('catalogo.consultar', <ConsultaPage />)} />
+            <Route path="consulta/pdf" element={conPermiso('catalogo.consultar', <ListadoPdfPage />)} />
             <Route
               path="consulta/:isbn"
               element={conPermiso('catalogo.consultar', <LibroDetallePage desdeConsulta />)}

@@ -7,6 +7,7 @@ import { BotonIcono } from '../../components/ui/BotonIcono';
 import { CampoSeleccion, CampoTexto } from '../../components/ui/Campo';
 import { EncabezadoPagina } from '../../components/ui/EncabezadoPagina';
 import { COLOR_ROL } from '../../config/colores';
+import { useAuth } from '../../context/AuthContext';
 import { Insignia } from '../../components/ui/Insignia';
 import { Modal } from '../../components/ui/Modal';
 import { Paginacion } from '../../components/ui/Paginacion';
@@ -24,6 +25,7 @@ type Dialogo =
 
 export function UsuariosPage() {
   const navegar = useNavigate();
+  const { tienePermiso } = useAuth();
   const avisoInicial = (useLocation().state as { aviso?: string } | null)?.aviso;
   const [borrador, setBorrador] = useState(FILTROS_INICIALES);
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
@@ -135,9 +137,16 @@ export function UsuariosPage() {
         titulo="Gestión de usuarios"
         descripcion="Administra las cuentas: alta, baja, reactivación, cambio y consulta."
       >
-        <Link to="/usuarios/nuevo" className="btn btn--primario">
-          Nuevo usuario +
-        </Link>
+        <div className="acciones">
+          {tienePermiso('perfiles.gestionar') && (
+            <Link to="/usuarios/perfiles" className="btn btn--secundario">
+              Perfiles y permisos
+            </Link>
+          )}
+          <Link to="/usuarios/nuevo" className="btn btn--primario">
+            Nuevo usuario +
+          </Link>
+        </div>
       </EncabezadoPagina>
 
       {avisoInicial && <Alerta tipo="exito">{avisoInicial}</Alerta>}

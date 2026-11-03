@@ -21,14 +21,19 @@ conectada a una base de datos **MySQL local**.
 - Login con validación de campos vacíos, credenciales incorrectas, bloqueo temporal tras 5 intentos y sesión expirada.
 - Gestión de usuarios: consulta con filtros (matrícula, rol, estado), orden por columna, paginación, alta, cambio,
   baja lógica (desactivar) con sus rechazos (multas pendientes, préstamos activos, último administrador) y reactivación.
+- Perfiles y permisos (desde Gestión de usuarios): lista de perfiles con sus usuarios y "X de 5" funciones, editar
+  permisos de cada perfil con interruptores, nuevo perfil (nombre obligatorio) y avisos de éxito. Al Administrador no
+  se le puede desactivar la gestión de usuarios y perfiles. Los cambios aplican a cada usuario en su siguiente inicio
+  de sesión.
 - Gestión de libros: lista con búsqueda y "Más filtros", nuevo libro, editar (incluye ISBN duplicado), ficha y baja
   (rechazada si hay ejemplares prestados o reservados).
 - Ejemplares: lista con filtros por libro, ID, estado, modalidad y ubicación; registrar N ejemplares; cambio de ejemplar
   (Prestado y Reservado no se cambian a mano) y baja.
 - Solicitud de compra: nueva solicitud con libros del catálogo o libros nuevos, consulta con filtros y detalle.
-- Consulta de libros (todos los roles): búsqueda combinada por título, autor, tema, ISBN, editorial, año y existencias.
-- Menú lateral según el rol: el administrador ve todo; el bibliotecario, libros, ejemplares y consulta;
-  alumno y profesor, solo consulta. El permiso se valida en la API, no solo en la pantalla.
+- Consulta de libros (todos los roles): búsqueda combinada por título, autor, tema, ISBN, editorial, año y existencias;
+  "Generar PDF" abre la vista previa del listado (pantalla 80) para descargarlo, imprimirlo o enviarlo por WhatsApp Web.
+- Menú lateral según los permisos del perfil: el administrador ve todo; el bibliotecario, libros, ejemplares y
+  consulta; el profesor, consulta y solicitud de compra; el alumno, solo consulta. El permiso se valida en la API, no solo en la pantalla.
 
 **App móvil (`movil/`)** — solo consulta de libros, igual a la sección "Móvil" del prototipo (pantallas M01 a M11)
 
@@ -269,12 +274,12 @@ biblioteca-ducky/
 │   ├── app.ts           arma la app de Express
 │   └── server.ts        prueba la BD y levanta el servidor
 └── web/src/
-    ├── pages/           una carpeta por módulo (usuarios, libros, ejemplares, solicitudes, consulta, auth)
+    ├── pages/           una carpeta por módulo (usuarios, perfiles, libros, ejemplares, solicitudes, consulta, auth)
     ├── components/ui/   Boton, Campo, Tabla, Paginacion, Modal, Alerta, Insignia, Icono…
     ├── components/layout/ BarraLateral, Pantalla (topbar + tarjeta), RutaProtegida
-    ├── services/        cliente HTTP y un servicio por recurso de la API
+    ├── services/        cliente HTTP, un servicio por recurso de la API, listado y generación del PDF
     ├── context/         AuthContext (sesión y permisos)
-    ├── config/          menú por permiso y colores de insignias
+    ├── config/          menú por permiso, funciones de "Perfiles y permisos" y colores de insignias
     └── styles/          tokens.css (variables del Design System) · global.css
 
 movil/                   (misma estructura que web/, con componentes de Ionic)
@@ -304,6 +309,9 @@ y la API vuelve a validar cada petición.
 | GET · POST | `/api/usuarios` | `usuarios.gestionar` |
 | GET · PUT | `/api/usuarios/:matricula` | `usuarios.gestionar` |
 | PATCH | `/api/usuarios/:matricula/desactivar` · `/reactivar` | `usuarios.gestionar` |
+| GET · POST | `/api/perfiles` | `perfiles.gestionar` |
+| GET | `/api/perfiles/permisos` · `/api/perfiles/:idRol` | `perfiles.gestionar` |
+| PUT | `/api/perfiles/:idRol/permisos` | `perfiles.gestionar` |
 | GET | `/api/libros` · `/api/libros/:isbn` | `catalogo.consultar` o `libros.gestionar` |
 | POST · PUT · DELETE | `/api/libros[/:isbn]` | `libros.gestionar` |
 | GET | `/api/ejemplares` | `catalogo.consultar` o `ejemplares.gestionar` |
@@ -349,8 +357,6 @@ cd movil && npm run lint && npm run format   # oxlint + Prettier
 
 - `REGLA_PRESTAMO.max_libros` del profesor queda en `NULL` hasta que el Product Owner lo defina.
 - El modelo no guarda nombre de la persona; la barra superior muestra matrícula y rol.
-- "Perfiles y permisos" (pantallas 29.x del Figma) no está en este entregable;
-  los permisos se administran por ahora desde `seed.sql` (tablas `permiso` y `rol_permiso`).
 - Préstamos, devoluciones, renovaciones, multas y reportes corresponden al Sprint 3; la BD ya tiene las tablas,
   la función de días hábiles y la vista de adeudos.
 - App móvil: el ícono es el de Capacitor por defecto. En Android, "Descargar PDF" lo guarda en Documentos e
